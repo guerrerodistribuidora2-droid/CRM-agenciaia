@@ -90,7 +90,11 @@ function createAuth() {
       user: {
         create: {
           after: async (user) => {
-            await onUserCreated(user.id, user.name);
+            await onUserCreated(
+              user.id,
+              user.name,
+              !isInternalSignup() && process.env.ALLOW_SIGNUP === "true"
+            );
           },
         },
       },

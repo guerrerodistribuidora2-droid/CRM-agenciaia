@@ -5,6 +5,12 @@ import { getAuth, runInternalSignup } from "@/lib/auth";
 import { getDb, schema } from "@/lib/db";
 import { newId } from "@/lib/db/ids";
 import { scoped } from "@/lib/db/tenant";
+import {
+  isValidUsername,
+  normalizeUsername,
+  usernameFromLoginEmail,
+  usernameLoginEmail,
+} from "@/lib/auth/username";
 
 export const dynamic = "force-dynamic";
 
@@ -26,25 +32,25 @@ export const GET = withAuth(async (session) => {
       id: m.id,
       role: m.role,
       name: m.name,
-      email: m.email,
+      username: usernameFromLoginEmail(m.email) ?? m.email,
       createdAt: m.createdAt.toISOString(),
     })),
   });
 });
 
 const createSchema = z.object({
-  name: z.string().trim().min(1).max(120),
-  email: z.string().trim().email(),
+  username: z.string().trim().min(3).max(32).refine(isValidUsername, "Nombre de usuario inválido"),
   password: z.string().min(8).max(128),
 });
 
-/** Alta de cuenta de equipo (owner only): email + contraseña temporal (FR-061). */
+/** Alta de cuenta de equipo (owner only): nombre de usuario + contraseña. */
 export const POST = withAuth(async (session, req: Request) => {
   if (session.role !== "owner") {
     return apiError(403, "forbidden", "Solo el propietario puede crear cuentas");
   }
   const body = await parseBody(req, createSchema);
   if (!body.ok) return body.response;
+  const username = normalizeUsername(body.data.username);
 
   const auth = getAuth();
   let newUserId: string;
@@ -52,8 +58,8 @@ export const POST = withAuth(async (session, req: Request) => {
     const result = await runInternalSignup(() =>
       auth.api.signUpEmail({
         body: {
-          name: body.data.name,
-          email: body.data.email,
+          name: body.data.username.trim(),
+          email: usernameLoginEmail(username),
           password: body.data.password,
         },
       })
@@ -63,7 +69,7 @@ export const POST = withAuth(async (session, req: Request) => {
     const message =
       err instanceof Error ? err.message : "No se pudo crear la cuenta";
     if (/exist/i.test(message)) {
-      return apiError(409, "duplicate", "Ya existe una cuenta con ese correo");
+      return apiError(409, "duplicate", "Ese nombre de usuario ya está registrado");
     }
     return apiError(422, "invalid", message);
   }

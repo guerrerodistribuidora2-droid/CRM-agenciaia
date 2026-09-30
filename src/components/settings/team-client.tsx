@@ -8,21 +8,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { isValidUsername, normalizeUsername } from "@/lib/auth/username";
 
 type Member = {
   id: string;
   role: string;
   name: string;
-  email: string;
+  username: string;
   createdAt: string;
 };
 
 export function TeamClient() {
   const [members, setMembers] = useState<Member[]>([]);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [tempPassword, setTempPassword] = useState("");
-  const [created, setCreated] = useState<{ email: string; password: string } | null>(null);
+  const [created, setCreated] = useState<{ username: string; password: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -54,7 +54,7 @@ export function TeamClient() {
     const res = await fetch("/api/settings/team", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ name, email, password: tempPassword }),
+      body: JSON.stringify({ username: normalizeUsername(username), password: tempPassword }),
     }).catch(() => null);
     setSaving(false);
     if (!res?.ok) {
@@ -64,9 +64,8 @@ export function TeamClient() {
       setError(data?.error?.message ?? "No se pudo crear la cuenta");
       return;
     }
-    setCreated({ email, password: tempPassword });
-    setName("");
-    setEmail("");
+    setCreated({ username: normalizeUsername(username), password: tempPassword });
+    setUsername("");
     setTempPassword("");
     void refetch();
   }
@@ -84,20 +83,13 @@ export function TeamClient() {
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="team-name">Nombre</Label>
+              <Label htmlFor="team-username">Nombre de usuario</Label>
               <Input
-                id="team-name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="team-email">Correo</Label>
-              <Input
-                id="team-email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="team-username"
+                autoComplete="username"
+                placeholder="ej. maria_garcia"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </div>
           </div>
@@ -122,14 +114,14 @@ export function TeamClient() {
               <p className="mt-1 text-success-text opacity-90">
                 Comparte estos datos ahora (no se volverán a mostrar):
                 <br />
-                <code>{created.email}</code> · contraseña{" "}
+                Usuario <code>{created.username}</code> · contraseña{" "}
                 <code>{created.password}</code>
               </p>
             </div>
           )}
           <Button
             disabled={
-              saving || !name.trim() || !email.trim() || tempPassword.length < 8
+              saving || !isValidUsername(username) || tempPassword.length < 8
             }
             onClick={() => void create()}
           >
@@ -151,7 +143,7 @@ export function TeamClient() {
             <ContactAvatar name={m.name} seed={m.id} size="sm" />
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{m.name}</p>
-              <p className="text-xs text-muted-foreground">{m.email}</p>
+              <p className="text-xs text-muted-foreground">Usuario: {m.username}</p>
             </div>
             <Badge variant={m.role === "owner" ? "default" : "secondary"}>
               {m.role === "owner" ? "Propietario" : "Miembro"}

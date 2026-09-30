@@ -8,10 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { loginIdentifier } from "@/lib/auth/username";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -20,13 +21,13 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    const { error: err } = await signIn.email({ email, password });
+    const { error: err } = await signIn.email({ email: loginIdentifier(username), password });
     setLoading(false);
     if (err) {
       setError(
         err.status === 429
           ? "Demasiados intentos. Espera unos minutos."
-          : "Correo o contraseña incorrectos."
+          : "Nombre de usuario o contraseña incorrectos."
       );
       return;
     }
@@ -42,14 +43,13 @@ export default function LoginPage() {
       <CardContent>
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="email">Correo</Label>
+            <Label htmlFor="username">Nombre de usuario</Label>
             <Input
-              id="email"
-              type="email"
-              autoComplete="email"
+              id="username"
+              autoComplete="username"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
           </div>
           <div className="space-y-1.5">
@@ -68,7 +68,7 @@ export default function LoginPage() {
             {loading ? "Entrando…" : "Entrar"}
           </Button>
           <p className="text-center text-sm text-muted-foreground">
-            ¿Primera vez aquí?{" "}
+            ¿Aún no tienes cuenta?{" "}
             <Link href="/register" className="text-primary hover:underline">
               Crear la cuenta inicial
             </Link>

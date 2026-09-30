@@ -181,7 +181,7 @@ export async function verifyZernioToken(token: string): Promise<void> {
  * interpretar — incluido `isAuthError`, que distingue una llave muerta de un
  * hipo transitorio y costó un incidente aprender.
  */
-async function zernioFetch(
+export async function zernioFetch(
   path: string,
   opts: {
     method?: "GET" | "POST";

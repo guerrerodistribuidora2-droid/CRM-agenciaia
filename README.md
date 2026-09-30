@@ -1,4 +1,16 @@
-# Vocero CRM
+# Agencia IA CRM
+
+Adaptación para administrar una agencia de IA, basada en [Vocero CRM](https://github.com/kevinrivm/vocero-crm) (licencia MIT).
+
+Además de la bandeja de WhatsApp y los mensajes de Facebook/Messenger del proyecto base, esta versión agrega una cartera de sitios web por cliente: dominio, plataforma, estado, renovación, mantenimiento mensual, notas y contacto asociado. Desde el sitio se puede iniciar una conversación de WhatsApp con una plantilla aprobada y sugerir el nombre del cliente, proyecto y dominio como variables.
+
+La sección **Comentarios** consulta y responde comentarios públicos de Facebook con la API de comentarios de Zernio. Configura Messenger en modo Zernio desde Ajustes → Messenger; la conexión Meta directa del proyecto base sigue destinada a mensajes directos.
+
+La conexión de cuentas sociales, el envío de plantillas y el hosting web de clientes siguen dependiendo de las credenciales y servicios propios de cada negocio. Esta aplicación organiza sitios y sus datos; no publica ni modifica el contenido de las webs.
+
+## Módulo de sitios web
+
+En **Sitios web** puedes crear, buscar, editar y quitar sitios de tu cartera. Vincula un contacto con número de WhatsApp para abrir el flujo de inicio de conversación. WhatsApp exige una plantilla aprobada para escribir primero; las variables sugeridas se pueden revisar antes de enviar.
 
 [![CI](https://github.com/kevinrivm/vocero-crm/actions/workflows/ci.yml/badge.svg)](https://github.com/kevinrivm/vocero-crm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)

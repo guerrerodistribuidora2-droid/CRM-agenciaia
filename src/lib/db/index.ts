@@ -40,7 +40,10 @@ const globalForDb = globalThis as unknown as {
 function createClient() {
   const env = getEnv();
   return postgres(env.DATABASE_URL, {
-    max: 10,
+    // Vercel creates short-lived serverless instances. Keep each instance's
+    // pool small when DATABASE_URL uses Supabase's transaction pooler.
+    max: process.env.VERCEL === "1" ? 1 : 10,
+    ...(process.env.VERCEL === "1" ? { prepare: false } : {}),
     ...PG_CONNECTION_OPTIONS,
   });
 }

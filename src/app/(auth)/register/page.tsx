@@ -8,11 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { isValidUsername, normalizeUsername, usernameLoginEmail } from "@/lib/auth/username";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -20,8 +20,17 @@ export default function RegisterPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (!isValidUsername(name)) {
+      setError("Usa entre 3 y 32 caracteres: letras, números, punto, guion o guion bajo.");
+      return;
+    }
     setLoading(true);
-    const { error: err } = await signUp.email({ name, email, password });
+    const username = normalizeUsername(name);
+    const { error: err } = await signUp.email({
+      name: name.trim(),
+      email: usernameLoginEmail(username),
+      password,
+    });
     setLoading(false);
     if (err) {
       if (err.status === 403) {
@@ -30,6 +39,8 @@ export default function RegisterPage() {
         );
       } else if (err.status === 429) {
         setError("Demasiados intentos. Espera unos minutos.");
+      } else if (/already exists|already used|duplicate/i.test(err.message ?? "")) {
+        setError("Ese nombre de usuario ya está registrado. Prueba con otro.");
       } else {
         setError(err.message ?? "No se pudo crear la cuenta.");
       }
@@ -44,30 +55,22 @@ export default function RegisterPage() {
       <CardHeader>
         <CardTitle>Crear cuenta</CardTitle>
         <CardDescription>
-          El primer registro crea la organización de esta instancia y queda
-          como propietario.
+          Crea tu acceso con un nombre de usuario y una contraseña.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="name">Tu nombre</Label>
+            <Label htmlFor="name">Nombre de usuario</Label>
             <Input
               id="name"
               required
+              minLength={3}
+              maxLength={32}
+              autoComplete="username"
+              placeholder="ej. maria_garcia"
               value={name}
               onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="email">Correo</Label>
-            <Input
-              id="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="space-y-1.5">

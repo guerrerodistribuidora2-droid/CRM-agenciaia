@@ -25,13 +25,16 @@ function countVariables(body: string): number {
 export function StartConversation({
   contactId,
   onStarted,
+  initialVariables = [],
 }: {
   contactId: string;
   onStarted: (conversationId: string) => void;
+  /** Datos de contexto sugeridos por el sitio web o la ficha de agencia. */
+  initialVariables?: string[];
 }) {
   const [templates, setTemplates] = useState<TemplateDto[] | null>(null);
   const [templateId, setTemplateId] = useState("");
-  const [vars, setVars] = useState<string[]>([]);
+  const [vars, setVars] = useState<string[]>(initialVariables);
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

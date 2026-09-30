@@ -45,10 +45,9 @@ export type Branding = {
 };
 
 export const DEFAULT_BRANDING: Branding = {
-  name: "Vocero",
-  // El azul eléctrico de vocerocrm.com: la instancia recién instalada se ve
-  // igual que la landing. Una agencia lo cambia en Configuración → Marca.
-  accent: "#0d5bff",
+  name: "Agencia IA",
+  // Acento del panel de agencia. Cada organización puede cambiarlo en Marca.
+  accent: "#3f5972",
   currency: DEFAULT_CURRENCY,
   favicon: null,
 };

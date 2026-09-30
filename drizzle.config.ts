@@ -3,15 +3,21 @@ import { defineConfig } from "drizzle-kit";
 
 // drizzle-kit corre fuera de Next: carga .env manualmente si hace falta.
 function loadDatabaseUrl(): string {
-  if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
-  try {
-    const env = readFileSync(".env", "utf8");
-    const line = env
-      .split(/\r?\n/)
-      .find((l) => l.startsWith("DATABASE_URL="));
-    if (line) return line.slice("DATABASE_URL=".length).trim();
-  } catch {
-    // sin .env: se devolverá vacío y drizzle-kit dará un error claro
+  const fromEnvironment =
+    process.env.MIGRATION_DATABASE_URL || process.env.DATABASE_URL;
+  if (fromEnvironment) return fromEnvironment;
+  for (const file of [".env.local", ".env"]) {
+    try {
+      const env = readFileSync(file, "utf8");
+      const lines = env.split(/\r?\n/);
+      for (const variable of ["MIGRATION_DATABASE_URL", "DATABASE_URL"]) {
+        const line = lines.find((entry) => entry.startsWith(`${variable}=`));
+        const url = line?.slice(`${variable}=`.length).trim();
+        if (url) return url;
+      }
+    } catch {
+      // probar el siguiente archivo; drizzle-kit dará un error si falta la URL
+    }
   }
   return "";
 }

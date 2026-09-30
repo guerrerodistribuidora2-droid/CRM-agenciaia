@@ -1,13 +1,13 @@
 {
-  "name": "vocero-crm",
+  "name": "agencia-ia-crm",
   "version": "1.4.0",
-  "description": "CRM de WhatsApp open source y self-hosted con agente de IA y Laboratorio de auto-evaluación",
+  "description": "CRM de agencia de IA para WhatsApp, Facebook, clientes y sitios web",
   "license": "MIT",
   "type": "module",
   "private": true,
   "packageManager": "pnpm@11.5.0",
   "engines": {
-    "node": ">=20"
+    "node": "24.x"
   },
   "scripts": {
     "dev": "next dev",
@@ -27,6 +27,7 @@
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
+    "ai": "^7.0.122",
     "better-auth": "^1.1.14",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

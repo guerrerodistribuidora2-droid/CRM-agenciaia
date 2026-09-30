@@ -204,7 +204,7 @@ export function BrandingClient({
                 <BrandLogo
                   branding={{ name: name.trim() || DEFAULT_BRANDING.name, accent, favicon }}
                 />
-                <span className="kicker mt-2 block">CRM · WhatsApp</span>
+                <span className="kicker mt-2 block">AGENCIA · CRM</span>
               </div>
               <span className={cn(navItemClass(true), "mt-3")}>
                 <Inbox className="h-[17px] w-[17px] text-brand" strokeWidth={1.8} />

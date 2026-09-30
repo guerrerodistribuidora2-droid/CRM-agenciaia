@@ -7,6 +7,8 @@ import {
   AlertTriangle,
   CalendarDays,
   ChartColumn,
+  MessageCircleMore,
+  Globe2,
   FlaskConical,
   Inbox,
   Kanban,
@@ -40,8 +42,10 @@ type NavItem = {
 
 const NAV: NavItem[] = [
   { href: "/inbox", label: "Bandeja", icon: Inbox, badge: true },
+  { href: "/comments", label: "Comentarios", icon: MessageCircleMore },
   { href: "/pipeline", label: "Pipeline", icon: Kanban },
   { href: "/contacts", label: "Contactos", icon: Users },
+  { href: "/websites", label: "Sitios web", icon: Globe2 },
   // 019 — Después de Contactos: primero se atiende y se organiza, luego se
   // mide. Antes de Agente y Laboratorio, que son configuración.
   { href: "/results", label: "Resultados", icon: ChartColumn },
@@ -163,7 +167,7 @@ export function AppNav({
         </button>
         <div className="min-w-0">
           <BrandLogo branding={branding} />
-          <span className="kicker mt-2 block">CRM · WhatsApp</span>
+          <span className="kicker mt-2 block">AGENCIA · CRM</span>
         </div>
       </div>
 
