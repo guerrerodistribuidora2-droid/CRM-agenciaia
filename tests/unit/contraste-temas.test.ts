@@ -217,6 +217,16 @@ describe("tema oscuro: acento", () => {
 });
 
 describe("tema claro: no cambia", () => {
+  it("el acento de respaldo coincide con la marca predeterminada", () => {
+    const set = resolveAccentSet(DEFAULT_BRANDING.accent, "light");
+    expect(hex(claro, "--accent")).toBe(set.accent);
+    expect(hex(claro, "--accent-hover")).toBe(set.hover);
+    expect(hex(claro, "--accent-soft")).toBe(set.soft);
+    expect(hex(claro, "--accent-tint")).toBe(set.tint);
+    expect(hex(claro, "--accent-text")).toBe(set.text);
+    expect(hex(claro, "--accent-fg")).toBe(set.fg);
+  });
+
   it("lo que flota, la tinta y el anillo del acento son los de siempre", () => {
     expect(claro["--bg-raised"]).toBe(claro["--bg"]);
     expect(claro["--accent-ink"]).toBe("var(--accent)");
